@@ -41,10 +41,10 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <FAQ />
+      
 
       <Gallery />
-
+      <FAQ />
       {/* <Sponsors /> */}
     </main>
   );
