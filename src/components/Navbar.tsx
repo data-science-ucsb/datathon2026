@@ -11,8 +11,10 @@ const Navbar: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-8">
-          <a href="#hero" className="hover:text-blue-400 transition-colors">Home</a>
+          <a href="#main" className="hover:text-blue-400 transition-colors">Home</a>
           <a href="#faq" className="hover:text-blue-400 transition-colors">FAQ</a>
+          <a href="#sponsors" className="hover:text-blue-400 transition-colors">Sponsors</a>
+          <a href="#gallery" className="hover:text-blue-400 transition-colors">Pictures</a>
           <button 
             disabled 
             className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-gray-400 cursor-not-allowed"

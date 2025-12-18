@@ -19,7 +19,7 @@ export const FAQ_DATA: FAQItem[] = [
     answer: "No, Data4Good is completely free for all registered participants. We provide food, swag, and sponsor resources."
   },
   {
-    question: "What kind of projects are expected?",
-    answer: "We will not release the specific tracks prior to the event, but you can expect tracks along the lines of social good."
+    question: "Do I need to have prior experience?",
+    answer: "We are inclusive of those in all experience levels, and host live workshops during the datathon as well!"
   }
 ];

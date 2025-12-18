@@ -1,6 +1,8 @@
 import React from 'react';
-import Hero from '../components/Hero';
+import Main from '../components/Main';
 import FAQ from '../components/FAQ';
+import Gallery from '../components/Gallery'; // Import the new component
+import Sponsors from '../components/Sponsors';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 
@@ -19,10 +21,18 @@ const StatItem = ({ end, suffix = "", prefix = "", label, colorClass }: { end: n
 const Home: React.FC = () => {
   return (
     <main>
-      <Hero />
+      <Main />
       
       {/* Statistics Section */}
-      <section className="py-20 border-y border-white/5 bg-white/5 backdrop-blur-sm">
+      <section className="relative py-20 bg-white/5 backdrop-blur-sm overflow-hidden">
+        {/* Top Glowing Boundary */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-blue-600/0 via-blue-600/50 to-purple-600/0"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-purple-600/0 blur-sm"></div>
+        
+        {/* Bottom Glowing Boundary */}
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-blue-600/0 via-blue-600/50 to-purple-600/0"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-purple-600/0 blur-sm"></div>
+
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <StatItem end={5} prefix="$" suffix="k+" label="Prizes" colorClass="text-blue-500" />
           <StatItem end={200} suffix="+" label="Hackers" colorClass="text-purple-500" />
@@ -32,6 +42,10 @@ const Home: React.FC = () => {
       </section>
 
       <FAQ />
+
+      <Gallery />
+
+      <Sponsors />
     </main>
   );
 };

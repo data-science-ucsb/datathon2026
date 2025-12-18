@@ -6,16 +6,16 @@ const FAQ: React.FC = () => {
 
   return (
     <section id="faq" className="py-32 px-6 bg-gray-950/50">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h2>
         <p className="text-gray-400 text-center mb-16">Everything you need to know about the upcoming datathon.</p>
         
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {FAQ_DATA.map((item, index) => (
-            <div key={index} className="group relative">
-              {/* Animated Glow Effect - Radiates when open or hovered */}
+            <div key={index} className="group relative h-fit">
+              {/* Animated Glow Effect - Now with persistent base opacity */}
               <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur transition duration-500 ${
-                openIndex === index ? 'opacity-40' : 'opacity-0 group-hover:opacity-20'
+                openIndex === index ? 'opacity-40' : 'opacity-10 group-hover:opacity-25'
               }`}></div>
               
               <div 
@@ -42,11 +42,13 @@ const FAQ: React.FC = () => {
                   </svg>
                 </button>
                 
-                <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                  openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                <div className={`grid transition-all duration-500 ease-in-out ${
+                  openIndex === index ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                 }`}>
-                  <div className="px-8 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4">
-                    {item.answer}
+                  <div className="overflow-hidden">
+                    <div className="px-8 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4">
+                      {item.answer}
+                    </div>
                   </div>
                 </div>
               </div>
