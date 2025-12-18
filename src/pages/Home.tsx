@@ -11,7 +11,7 @@ const StatItem = ({ end, suffix = "", prefix = "", label, colorClass }: { end: n
   return (
     <div ref={ref}>
       <div className={`text-4xl font-extrabold ${colorClass} mb-2`}>
-        {inView ? <CountUp end={end} duration={2.5} prefix={prefix} suffix={suffix} /> : (prefix + "0" + suffix)}
+        {inView ? <CountUp end={end} duration={7.5} prefix={prefix} suffix={suffix} /> : (prefix + "0" + suffix)}
       </div>
       <div className="text-gray-400 text-sm uppercase tracking-wider">{label}</div>
     </div>
