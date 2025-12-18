@@ -3,8 +3,8 @@ import { FAQItem } from '../types';
 
 export const FAQ_DATA: FAQItem[] = [
   {
-    question: "What is DataQuest?",
-    answer: "DataQuest is a 48-hour data science competition where students and professionals collaborate to build innovative solutions using real-world datasets."
+    question: "What is Data4Good?",
+    answer: "Data4Good is a 48-hour data science competition where students and professionals collaborate to build innovative solutions using real-world datasets."
   },
   {
     question: "Who can participate?",

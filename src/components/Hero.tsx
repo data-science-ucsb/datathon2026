@@ -19,7 +19,7 @@ const Hero: React.FC = () => {
         </div>
         
         <h1 className="text-6xl md:text-8xl font-extrabold mb-6 tracking-tight leading-tight">
-          Decode the Future at <br />
+          Code for Good at <br />
           <span className="gradient-text">{EVENT_NAME}</span>
         </h1>
         
@@ -43,7 +43,7 @@ const Hero: React.FC = () => {
           className="px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all text-white font-bold text-lg glow shadow-lg transform active:scale-95 opacity-50 cursor-not-allowed"
           title="Opening Summer 2025"
         >
-          Applications Open Soon
+          Registration Opens Soon
         </button>
       </div>
 

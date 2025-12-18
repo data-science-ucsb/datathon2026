@@ -1,5 +1,5 @@
 {
-  "name": "copy-of-dataquest-2025-datathon",
+  "name": "data4good-2025",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.3",
     "@google/genai": "^1.34.0",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.3",
+    "react-countup": "^6.5.3",
+    "react-dom": "^19.2.3",
+    "react-intersection-observer": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
