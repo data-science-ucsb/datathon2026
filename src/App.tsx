@@ -1,6 +1,5 @@
 import React from 'react';
 import Navbar from './components/Navbar';
-import AIAssistant from './components/AIAssistant';
 import Home from './pages/Home';
 
 const App: React.FC = () => {
@@ -15,7 +14,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white">D4G</div>
-             <span className="font-bold text-lg">Data4Good 2025</span>
+             <span className="font-bold text-lg">Data4Good 2026</span>
           </div>
           
           <div className="flex gap-8 text-gray-500 text-sm">
@@ -24,12 +23,11 @@ const App: React.FC = () => {
           </div>
           
           <div className="text-gray-600 text-sm">
-            © 2025 Data4Good Team. All rights reserved.
+            Made with ❤️ by <a href="https://datascienceucsb.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Data Science UCSB</a>
           </div>
         </div>
       </footer>
 
-      <AIAssistant />
     </div>
   );
 };

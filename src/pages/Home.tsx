@@ -26,7 +26,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <StatItem end={5} prefix="$" suffix="k+" label="Prizes" colorClass="text-blue-500" />
           <StatItem end={200} suffix="+" label="Hackers" colorClass="text-purple-500" />
-          <StatItem end={48} suffix="h" label="Building" colorClass="text-pink-500" />
+          <StatItem end={36} suffix="h" label="Building" colorClass="text-pink-500" />
           <StatItem end={10} suffix="+" label="Sponsors" colorClass="text-blue-400" />
         </div>
       </section>
