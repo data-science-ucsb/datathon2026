@@ -45,7 +45,7 @@ const Home: React.FC = () => {
 
       <Gallery />
 
-      <Sponsors />
+      {/* <Sponsors /> */}
     </main>
   );
 };

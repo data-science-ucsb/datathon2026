@@ -30,9 +30,17 @@ const photos = [
 
 const Gallery: React.FC = () => {
   return (
-    <section id="gallery" className="py-32 px-6 border-t border-white/5">
+    <section id="gallery" className="relative py-32 px-6 overflow-hidden">
+      {/* Top Glowing Boundary */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-blue-600/0 via-blue-600/50 to-purple-600/0"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-purple-600/0 blur-sm"></div>
+      
+      {/* Bottom Glowing Boundary */}
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-blue-600/0 via-blue-600/50 to-purple-600/0"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-purple-600/0 blur-sm"></div>
+
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-5">
           <h2 className="text-4xl font-bold mb-4">Previous Years</h2>
           <p className="text-gray-400">A look back at our previous Datathons!</p>
         </div>
