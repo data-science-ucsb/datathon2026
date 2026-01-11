@@ -1,6 +1,5 @@
 import React from 'react';
 import { EVENT_NAME } from '../data';
-import eventLogo from '../assets/Logo-1.jpg'; // Import the logo
 
 const Navbar: React.FC = () => {
   return (
@@ -8,7 +7,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <a href="#main" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <img 
-            src={eventLogo} 
+            src="/Logo-1.jpg" 
             alt="Event Logo" 
             className="w-10 h-10 object-contain rounded-lg shadow-lg shadow-blue-500/10" 
           />

@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import eventLogo from './assets/Logo-1.jpg'; // Import the logo
 
 
 const App: React.FC = () => {
@@ -16,7 +15,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
             <img 
-                        src={eventLogo} 
+                        src="/Logo-1.jpg"
                         alt="Event Logo" 
                         className="w-10 h-10 object-contain rounded-lg shadow-lg shadow-blue-500/10" 
                       />
