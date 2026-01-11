@@ -1,7 +1,8 @@
 import React from 'react';
 import { EVENT_NAME, EVENT_DATE, LOCATION } from '../data';
 import dsLogo from '../assets/ds-logo.png';
-import mainBg from '../assets/datathon1.jpg'; // Import the new image
+import mainBg from '../assets/datathon1.jpg';
+import eventLogo from '../assets/Logo-1.jpg'; // Add this import
 
 const Main: React.FC = () => {
   return (
@@ -48,11 +49,9 @@ const Main: React.FC = () => {
           {/* Left Side: Event Logo Placeholder */}
           <div className="flex justify-center lg:justify-center order-2 lg:order-1">
             <div className="relative group w-64 h-64 md:w-96 md:h-96 flex items-center justify-center">
-              {/* Glow behind logo */}
-              <div className="absolute inset-0 bg-blue-600/20 blur-[100px] rounded-full animate-pulse transition-transform duration-700 group-hover:scale-125"></div>
               <img 
-                src={dsLogo} // Replace with your actual Event Logo
-                className="relative w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-transform duration-700 group-hover:scale-110" 
+                src={eventLogo} 
+                className="relative w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 [mask-image:radial-gradient(circle,black_60%,transparent_100%)]" 
                 alt="Event Logo" 
               />
             </div>

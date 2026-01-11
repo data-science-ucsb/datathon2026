@@ -1,12 +1,17 @@
 import React from 'react';
 import { EVENT_NAME } from '../data';
+import eventLogo from '../assets/Logo-1.jpg'; // Import the logo
 
 const Navbar: React.FC = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/50 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <a href="#main" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white">DG</div>
+        <a href="#main" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <img 
+            src={eventLogo} 
+            alt="Event Logo" 
+            className="w-10 h-10 object-contain rounded-lg shadow-lg shadow-blue-500/10" 
+          />
           <span className="font-bold text-xl tracking-tight hidden sm:block">{EVENT_NAME}</span>
         </a>
         
