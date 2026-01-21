@@ -1,39 +1,91 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import VerifyEmail from './pages/EmailVerification';
+import PrivateRoute from './components/PrivateRoute';
 
+// Page transition variants - smoother and faster
+const pageVariants = {
+  initial: { 
+    opacity: 0, 
+    y: 10,
+    scale: 0.98
+  },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1] // Custom easing for smoothness
+    }
+  },
+  exit: { 
+    opacity: 0,
+    y: -10,
+    scale: 0.98,
+    transition: {
+      duration: 0.2,
+      ease: [0.22, 1, 0.36, 1]
+    }
+  }
+};
+
+// Wrapper component for animated pages
+const AnimatedPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location}>
+        <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
+        <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
+        <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
+        <Route path="/verify-email" element={<AnimatedPage><VerifyEmail /></AnimatedPage>} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <AnimatedPage>
+                <Dashboard />
+              </AnimatedPage>
+            </PrivateRoute>
+          } 
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 selection:bg-blue-500/30 selection:text-blue-200">
-      <Navbar />
-      
-      <Home />
-
-      {/* Footer */}
-      <footer className="py-12 border-t border-white/10 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3">
-            <img 
-                        src="/Logo-1.jpg"
-                        alt="Event Logo" 
-                        className="w-10 h-10 object-contain rounded-lg shadow-lg shadow-blue-500/10" 
-                      />
-             <span className="font-bold text-lg">Data4Good 2026</span>
-          </div>
-          
-          <div className="flex gap-8 text-gray-500 text-sm">
-            <a href="#" className="hover:text-white transition-colors">Discord</a>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
-          </div>
-          
-          <div className="text-gray-600 text-sm">
-            Made with ❤️ by <a href="https://datascienceucsb.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Data Science UCSB</a>
-          </div>
+    <Router>
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-950 text-white">
+          <Navbar />
+          <AnimatedRoutes />
         </div>
-      </footer>
-
-    </div>
+      </AuthProvider>
+    </Router>
   );
 };
 
