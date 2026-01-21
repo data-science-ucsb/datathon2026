@@ -8,7 +8,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login, currentUser } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,13 +18,6 @@ const Login: React.FC = () => {
       setError('');
       setLoading(true);
       await login(email, password);
-      
-      // Check if email is verified
-      if (currentUser && !currentUser.emailVerified) {
-        setError('Please verify your email before logging in. Check your inbox.');
-        return;
-      }
-      
       navigate('/dashboard');
     } catch (err: any) {
       setError('Failed to log in. Check your credentials.');

@@ -6,6 +6,7 @@ import { db } from '../firebase/config';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,6 +19,9 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     // Validation
+    if (email !== confirmEmail) {
+      return setError('Emails do not match');
+    }
     if (password !== confirmPassword) {
       return setError('Passwords do not match');
     }
@@ -32,14 +36,13 @@ const Register: React.FC = () => {
       // Create auth account
       const userCredential = await signup(email, password);
       
-      // Save minimal registration data to Firestore
+      // Save registration data to Firestore
       await setDoc(doc(db, 'registrations', userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: email,
-        status: 'incomplete', // Mark as incomplete until they fill out the application
+        status: 'incomplete',
         role: 'student',
         createdAt: new Date().toISOString(),
-        emailVerified: false,
         applicationCompleted: false
       });
       
@@ -60,17 +63,12 @@ const Register: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-2">Check Your Email!</h2>
+          <h2 className="text-2xl font-bold mb-2">Account Created! 🎉</h2>
           <p className="text-gray-400 mb-4">
-            We've sent a verification link to <span className="text-blue-400">{email}</span>
+            Welcome to Data4Good 2026! Your account has been successfully created.
           </p>
-          <div className="bg-yellow-500/10 border border-yellow-500/50 rounded-lg p-3 mb-6">
-            <p className="text-sm text-yellow-400">
-              ⚠️ <strong>Check your spam folder</strong> if you don't see the email within a few minutes.
-            </p>
-          </div>
           <p className="text-sm text-gray-500 mb-6">
-            After verifying your email, log in to complete your application.
+            You can now log in and complete your application.
           </p>
           <Link
             to="/login"
@@ -102,6 +100,18 @@ const Register: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Confirm Email *</label>
+            <input
+              type="email"
+              value={confirmEmail}
+              onChange={(e) => setConfirmEmail(e.target.value)}
               required
               className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
               placeholder="you@example.com"
