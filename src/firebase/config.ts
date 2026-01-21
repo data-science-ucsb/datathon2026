@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBKak9AosJ01jLFryKDLXaH9wZjzz5Pjj4",
-  authDomain: "datathon2026-6d524.firebaseapp.com",
-  projectId: "datathon2026-6d524",
-  storageBucket: "datathon2026-6d524.firebasestorage.app",
-  messagingSenderId: "755565057525",
-  appId: "1:755565057525:web:27ae8af0ee80d61b4dbcbc",
-  measurementId: "G-YH5X9B94Q6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
