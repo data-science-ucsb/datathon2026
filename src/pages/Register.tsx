@@ -112,9 +112,6 @@ const Register: React.FC = () => {
               stroke-dashoffset: 100;
               animation: checkmark 0.6s ease-out 0.3s forwards;
             }
-            .success-glow {
-              box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
-            }
           `}
         </style>
 
@@ -161,15 +158,8 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-20 pb-12 bg-gray-950">
+    <div className="min-h-screen flex items-center justify-center px-6 pt-28 pb-12 bg-gray-950">
       <Toaster position="top-center" />
-      <style>
-        {`
-          .glow-border {
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
-          }
-        `}
-      </style>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -178,9 +168,8 @@ const Register: React.FC = () => {
         className="w-full max-w-6xl"
       >
         <motion.div
-          whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
-          className="grid md:grid-cols-2 gap-0 bg-gray-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden shadow-2xl glow-border"
+          className="grid md:grid-cols-2 gap-0 bg-gray-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden shadow-2xl"
         >
           {/* Left Side - Logo & Background */}
           <motion.div 
