@@ -53,7 +53,11 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ userRegistration, c
             onComplete={() => {
               setShowApplicationForm(false);
               onRefresh();
-            }} 
+            }}
+            onExit={() => {
+              setShowApplicationForm(false);
+              onRefresh();
+            }}
           />
         </div>
       </div>
