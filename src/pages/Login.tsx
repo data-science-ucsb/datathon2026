@@ -65,7 +65,7 @@ const Login: React.FC = () => {
       setResetLoading(true);
       
       const actionCodeSettings = {
-        url: window.location.origin + '/reset-password',
+        url: 'https://datathon.datascienceucsb.org/reset-password',
         handleCodeInApp: true,
       };
       
