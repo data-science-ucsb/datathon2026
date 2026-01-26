@@ -100,9 +100,6 @@ const ResetPassword: React.FC = () => {
               stroke-dashoffset: 100;
               animation: checkmark 0.6s ease-out 0.3s forwards;
             }
-            .success-glow {
-              box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
-            }
           `}
         </style>
 
@@ -110,7 +107,7 @@ const ResetPassword: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-md bg-gray-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl p-12 text-center success-glow"
+          className="w-full max-w-md bg-gray-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl p-12 text-center"
         >
           <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 scale-in border-2 border-green-500/30">
             <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
