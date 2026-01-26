@@ -10,6 +10,8 @@ const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const navigate = useNavigate();
 
   const oobCode = searchParams.get('oobCode');
@@ -22,6 +24,17 @@ const ResetPassword: React.FC = () => {
       setTimeout(() => navigate('/login'), 2000);
     }
   }, [oobCode, mode, navigate]);
+
+  useEffect(() => {
+    if (success && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (success && countdown === 0) {
+      navigate('/login');
+    }
+  }, [success, countdown, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +58,7 @@ const ResetPassword: React.FC = () => {
       setLoading(true);
       await confirmPasswordReset(auth, oobCode, newPassword);
       toast.success('Password reset successfully!');
-      setTimeout(() => navigate('/login'), 2000);
+      setSuccess(true);
     } catch (err: any) {
       let errorMessage = 'Failed to reset password';
       
@@ -67,8 +80,76 @@ const ResetPassword: React.FC = () => {
     return null; // Will redirect via useEffect
   }
 
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 pt-32 bg-gray-950">
+        <Toaster position="top-center" />
+        <style>
+          {`
+            @keyframes scaleIn {
+              from { transform: scale(0); opacity: 0; }
+              to { transform: scale(1); opacity: 1; }
+            }
+            @keyframes checkmark {
+              0% { stroke-dashoffset: 100; }
+              100% { stroke-dashoffset: 0; }
+            }
+            .scale-in { animation: scaleIn 0.5s ease-out forwards; }
+            .checkmark-path {
+              stroke-dasharray: 100;
+              stroke-dashoffset: 100;
+              animation: checkmark 0.6s ease-out 0.3s forwards;
+            }
+            .success-glow {
+              box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            }
+          `}
+        </style>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md bg-gray-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl p-12 text-center success-glow"
+        >
+          <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 scale-in border-2 border-green-500/30">
+            <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
+              <path
+                className="checkmark-path"
+                d="M5 13l4 4L19 7"
+                stroke="#22c55e"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+            className="space-y-4"
+          >
+            <h2 className="text-2xl font-bold text-gray-200">
+              Password Reset Successfully
+            </h2>
+            
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <svg className="w-5 h-5 text-blue-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p className="text-gray-400">Redirecting you...</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-20 bg-gray-950">
+    <div className="min-h-screen flex items-center justify-center px-6 pt-32 bg-gray-950">
       <Toaster position="top-center" />
 
       <motion.div
