@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { EVENT_NAME, EVENT_DATE, LOCATION } from '../data';
 import dsLogo from '../assets/ds-logo.png';
 import mainBg from '/datathon1.webp';
@@ -63,7 +64,7 @@ const Main: React.FC = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              Registration Opening Soon
+              Registration Open
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 tracking-tight leading-tight">
@@ -88,12 +89,13 @@ const Main: React.FC = () => {
               </div>
             </div>
 
-            <button 
-              className="px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all text-white font-bold text-lg glow shadow-lg transform active:scale-95 opacity-50 cursor-not-allowed"
-              title="Opening Summer 2025"
-            >
-              Registration Opens Soon
-            </button>
+            <Link to="/register">
+              <button 
+                className="px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all text-white font-bold text-lg shadow-lg transform hover:scale-105 active:scale-95"
+              >
+                Register Now
+              </button>
+            </Link>
           </div>
         </div>
       </div>

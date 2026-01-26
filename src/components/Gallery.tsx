@@ -1,7 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'; // Removed EffectFade
-import datathon1 from "../assets/datathon1.jpg";
+import datathon1 from "/datathon1.jpg";
 import datathon2 from "../assets/datathon2.jpeg";
 import datathon3 from "../assets/datathon3.jpeg";
 import datathon4 from "../assets/datathon4.jpeg";
