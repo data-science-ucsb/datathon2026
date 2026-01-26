@@ -66,7 +66,7 @@ const Login: React.FC = () => {
       
       const actionCodeSettings = {
         url: 'https://datathon.datascienceucsb.org/reset-password',
-        handleCodeInApp: true,
+        handleCodeInApp: false,
       };
       
       await sendPasswordResetEmail(auth, resetEmail, actionCodeSettings);
