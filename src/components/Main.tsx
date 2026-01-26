@@ -1,7 +1,7 @@
 import React from 'react';
 import { EVENT_NAME, EVENT_DATE, LOCATION } from '../data';
 import dsLogo from '../assets/ds-logo.png';
-import mainBg from '../assets/datathon1.jpg';
+import mainBg from '/datathon1.webp';
 
 const Main: React.FC = () => {
   return (
@@ -49,7 +49,7 @@ const Main: React.FC = () => {
           <div className="flex justify-center lg:justify-center order-2 lg:order-1">
             <div className="relative group w-64 h-64 md:w-96 md:h-96 flex items-center justify-center">
               <img 
-                src="/Logo-1.jpg"
+                src="/data4good-letters.svg"
                 className="relative w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 [mask-image:radial-gradient(circle,black_60%,transparent_100%)]" 
                 alt="Event Logo" 
               />
