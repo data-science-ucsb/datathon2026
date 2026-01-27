@@ -23,7 +23,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete }) =>
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (hackathonExperience === 0 || codingExperience === 0) {
       setError('Please select your experience levels');
       return;
@@ -146,7 +146,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete }) =>
             value={dietaryRestrictions}
             onChange={(e) => setDietaryRestrictions(e.target.value)}
             className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
-            placeholder="e.g., Vegetarian, Vegan, Gluten-free, Nut allergy, etc."
+            placeholder="e.g., Vegetarian, Vegan, Gluten-Free, Nut Allergy, etc."
             rows={2}
           />
         </div>
@@ -183,16 +183,14 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete }) =>
                   onChange={(e) => setHackathonExperience(Number(e.target.value))}
                   className="sr-only"
                 />
-                <div className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
-                  hackathonExperience === level
-                    ? 'border-blue-500 bg-blue-500/20'
-                    : 'border-white/10 bg-gray-950/50 hover:border-white/20'
-                }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${
-                    hackathonExperience === level
-                      ? 'bg-blue-500 text-white scale-110'
-                      : 'bg-gray-800 text-gray-400'
+                <div className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${hackathonExperience === level
+                  ? 'border-blue-500 bg-blue-500/20'
+                  : 'border-white/10 bg-gray-950/50 hover:border-white/20'
                   }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${hackathonExperience === level
+                    ? 'bg-blue-500 text-white scale-110'
+                    : 'bg-gray-800 text-gray-400'
+                    }`}>
                     {level}
                   </div>
                   <span className="text-xs text-gray-500">
@@ -222,16 +220,14 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete }) =>
                   onChange={(e) => setCodingExperience(Number(e.target.value))}
                   className="sr-only"
                 />
-                <div className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
-                  codingExperience === level
-                    ? 'border-blue-500 bg-blue-500/20'
-                    : 'border-white/10 bg-gray-950/50 hover:border-white/20'
-                }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${
-                    codingExperience === level
-                      ? 'bg-blue-500 text-white scale-110'
-                      : 'bg-gray-800 text-gray-400'
+                <div className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${codingExperience === level
+                  ? 'border-blue-500 bg-blue-500/20'
+                  : 'border-white/10 bg-gray-950/50 hover:border-white/20'
                   }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${codingExperience === level
+                    ? 'bg-blue-500 text-white scale-110'
+                    : 'bg-gray-800 text-gray-400'
+                    }`}>
                     {level}
                   </div>
                   <span className="text-xs text-gray-500">

@@ -4,7 +4,7 @@ import { FAQItem } from '../types';
 export const FAQ_DATA: FAQItem[] = [
   {
     question: "What is Data4Good?",
-    answer: "Data4Good 2026 is a 36-hour hackathon at UC Santa Barbara bringing together innovators, coders, and data enthusiasts to craft impactful solutions powered by data. Over an action-packed weekend, participants will collaborate, compete, and learn, developing projects that tackle real-world, open-ended challenges while exploring the latest advancements in data science, AI, and technology. "
+    answer: "Data4Good 2026 is a 36-hour hackathon at UC Santa Barbara bringing together innovators, coders, and data enthusiasts to craft impactful solutions powered by data. Over an action-packed weekend, participants will collaborate, compete, and learn, developing projects that tackle real-world, open-ended challenges while exploring the latest advancements in data science, AI, and technology."
   },
   {
     question: "Who can participate?",
@@ -12,7 +12,7 @@ export const FAQ_DATA: FAQItem[] = [
   },
   {
     question: "What is the team size?",
-    answer: "Teams can consist of 1 to 4 members. You can form your own team or find one during our team finding socials."
+    answer: "Teams can consist of 1 to 4 members. You can form your own team or find one during our team-finding socials."
   },
   {
     question: "Is there a registration fee?",
@@ -20,6 +20,6 @@ export const FAQ_DATA: FAQItem[] = [
   },
   {
     question: "Do I need to have prior experience?",
-    answer: "We are inclusive of those in all experience levels, and host live workshops during the datathon as well!"
+    answer: "We are inclusive of those at all experience levels, and host live workshops during the datathon as well!"
   }
 ];
