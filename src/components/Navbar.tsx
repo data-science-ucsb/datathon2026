@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
               to="/register"
               className="px-4 py-2 rounded-lg bg-blue-600/15 hover:bg-blue-600/25 backdrop-blur-xl border border-blue-500/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200 font-medium transition-all duration-300"
             >
-              Register
+              Register / Login
             </Link>
           )}
         </div>
