@@ -8,17 +8,18 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ResetPassword from './pages/ResetPassword';
+import SponsorContact from './pages/SponsorContact';
 import PrivateRoute from './components/PrivateRoute';
 
 // Page transition variants - smoother and faster
 const pageVariants = {
-  initial: { 
-    opacity: 0, 
+  initial: {
+    opacity: 0,
     y: 10,
     scale: 0.98
   },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     scale: 1,
     transition: {
@@ -26,7 +27,7 @@ const pageVariants = {
       ease: [0.22, 1, 0.36, 1] // Custom easing for smoothness
     }
   },
-  exit: { 
+  exit: {
     opacity: 0,
     y: -10,
     scale: 0.98,
@@ -58,23 +59,28 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location}>
         <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
+        <Route path="/sponsor" element={<AnimatedPage><SponsorContact /></AnimatedPage>} />
         <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
         <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
         <Route path="/reset-password" element={<AnimatedPage><ResetPassword /></AnimatedPage>} />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             <PrivateRoute>
               <AnimatedPage>
                 <Dashboard />
               </AnimatedPage>
             </PrivateRoute>
-          } 
+          }
         />
       </Routes>
     </AnimatePresence>
   );
 };
+
+import { Toaster } from 'react-hot-toast';
+
+// ... (existing helper function code omitted for brevity) ...
 
 const App: React.FC = () => {
   return (
@@ -83,6 +89,16 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-gray-950 text-white">
           <Navbar />
           <AnimatedRoutes />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: '#1f2937', // gray-800
+                color: '#fff',
+                border: '1px solid #374151', // gray-700
+              },
+            }}
+          />
         </div>
       </AuthProvider>
     </Router>
