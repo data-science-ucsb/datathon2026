@@ -31,16 +31,16 @@ const Navbar: React.FC = () => {
               <a href="#main" className="hover:text-blue-400 transition-colors">Home</a>
               <a href="#gallery" className="hover:text-blue-400 transition-colors">Pictures</a>
               <a href="#sponsors" className="hover:text-blue-400 transition-colors">Past Sponsors</a>
-              {/* <Link to="/sponsor" className="hover:text-blue-400 transition-colors">Sponsor Us</Link> */}
               <a href="#faq" className="hover:text-blue-400 transition-colors">FAQ</a>
+              <Link to="/sponsor" className="hover:text-blue-400 transition-colors">Sponsor Us</Link>
             </>
           ) : (
             <>
               <Link to="/#main" className="hover:text-blue-400 transition-colors">Home</Link>
               <Link to="/#gallery" className="hover:text-blue-400 transition-colors">Pictures</Link>
               <Link to="/#sponsors" className="hover:text-blue-400 transition-colors">Past Sponsors</Link>
-              <Link to="/sponsor" className="hover:text-blue-400 transition-colors">Sponsor Us</Link>
               <Link to="/#faq" className="hover:text-blue-400 transition-colors">FAQ</Link>
+              <Link to="/sponsor" className="hover:text-blue-400 transition-colors">Sponsor Us</Link>
             </>
           )}
 

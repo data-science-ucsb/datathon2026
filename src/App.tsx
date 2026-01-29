@@ -82,9 +82,12 @@ import { Toaster } from 'react-hot-toast';
 
 // ... (existing helper function code omitted for brevity) ...
 
+import ScrollToTop from './components/ScrollToTop';
+
 const App: React.FC = () => {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <div className="min-h-screen bg-gray-950 text-white">
           <Navbar />
