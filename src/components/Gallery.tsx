@@ -41,7 +41,7 @@ const Gallery: React.FC = () => {
 
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-5">
-          <h2 className="text-4xl font-bold mb-4">Previous Years</h2>
+          <h2 className="text-4xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent mb-4">Previous Years</h2>
           <p className="text-gray-400">A look back at our previous Datathons!</p>
         </div>
 
