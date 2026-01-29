@@ -53,10 +53,10 @@ const Register: React.FC = () => {
     try {
       setError('');
       setLoading(true);
-      
+
       // Create the account (this automatically signs them in)
       const userCredential = await signup(email, password);
-      
+
       // Save user data to Firestore
       await setDoc(doc(db, 'registrations', userCredential.user.uid), {
         uid: userCredential.user.uid,
@@ -64,17 +64,18 @@ const Register: React.FC = () => {
         status: 'incomplete',
         role: 'student',
         createdAt: new Date().toISOString(),
-        applicationCompleted: false
+        applicationCompleted: false,
+        isCheckedIn: false
       });
-      
+
       // IMPORTANT: Sign them out immediately after registration
       await signOut(auth);
-      
+
       toast.success('Account created successfully!');
       setSuccess(true);
     } catch (err: any) {
       let errorMessage = 'Failed to create account. Please try again.';
-      
+
       if (err.code === 'auth/email-already-in-use') {
         errorMessage = 'This email is already in use. Please sign in instead.';
       } else if (err.code === 'auth/invalid-email') {
@@ -84,7 +85,7 @@ const Register: React.FC = () => {
       } else if (err.code === 'auth/network-request-failed') {
         errorMessage = 'Network error. Please check your connection.';
       }
-      
+
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -133,7 +134,7 @@ const Register: React.FC = () => {
               />
             </svg>
           </div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,7 +144,7 @@ const Register: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-200">
               Account Created Successfully
             </h2>
-            
+
             <div className="flex items-center justify-center gap-3 pt-2">
               <svg className="w-5 h-5 text-blue-400 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -172,7 +173,7 @@ const Register: React.FC = () => {
           className="grid md:grid-cols-2 gap-0 bg-gray-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden shadow-2xl"
         >
           {/* Left Side - Logo & Background */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
@@ -181,12 +182,12 @@ const Register: React.FC = () => {
           >
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
             <div className="relative z-10 text-center space-y-6">
-              <motion.img 
+              <motion.img
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                src="/data4good-letters.svg" 
-                alt="Data Science UCSB" 
+                src="/data4good-letters.svg"
+                alt="Data Science UCSB"
                 className="w-64 h-64 mx-auto object-contain"
               />
               <motion.div

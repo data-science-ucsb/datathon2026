@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { doc, updateDoc, collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Registration {
   uid: string;
@@ -20,6 +23,7 @@ interface Registration {
   createdAt: string;
   emailVerified: boolean;
   applicationCompleted: boolean;
+  isCheckedIn?: boolean;
 }
 
 interface OrganizerDashboardProps {
@@ -32,6 +36,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  // Local state for immediate UI feedback. Dictionary of uid -> boolean status.
+  const [localCheckInStatus, setLocalCheckInStatus] = useState<Record<string, boolean>>({});
 
   const handleLogout = async () => {
     try {
@@ -41,6 +47,43 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       console.error('Failed to logout', error);
     }
   };
+
+  const handleCheckInToggle = async (uid: string, currentStatus: boolean, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // Determine the next status. If we have a local override, use that, otherwise use prop.
+    // Actually, simply toggle whatever was passed in as "currentStatus" (which should be the source of truth at click time).
+    const newStatus = !currentStatus;
+
+    try {
+      // 1. Optimistic Update (Local State)
+      setLocalCheckInStatus(prev => ({
+        ...prev,
+        [uid]: newStatus
+      }));
+
+      // 2. Fire and forget update
+      await updateDoc(doc(db, 'registrations', uid), {
+        isCheckedIn: newStatus
+      });
+
+      toast.success(newStatus ? 'Checked in successfully' : 'Check-in removed', {
+        id: `checkin-${uid}`, // Prevent duplicate toasts
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('Error toggling check-in:', error);
+      toast.error('Failed to update status');
+
+      // Revert local state on error
+      setLocalCheckInStatus(prev => ({
+        ...prev,
+        [uid]: !newStatus
+      }));
+    }
+  };
+
+
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -117,8 +160,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
 
   const filteredRegistrations = registrations.filter(reg => {
     const matchesSearch = (reg.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (reg.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (reg.school || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (reg.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (reg.school || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || reg.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
@@ -132,7 +175,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             <h1 className="text-3xl font-bold mb-2">Organizer Dashboard</h1>
             <p className="text-gray-400">Overview of all registrations and statistics</p>
           </div>
-          
+
           {/* Logout Button - Top Right */}
           <button
             onClick={handleLogout}
@@ -141,6 +184,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             Logout
           </button>
         </div>
+        <Toaster position="top-right" />
 
         {/* Statistics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -317,6 +361,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Name</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Check In</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">School</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Year</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
@@ -326,30 +371,42 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filteredRegistrations.map((reg) => (
-                  <tr 
-                    key={reg.uid} 
+                  <tr
+                    key={reg.uid}
                     className="hover:bg-white/5 transition"
                   >
                     <td className="px-6 py-4 text-sm">{reg.name || '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-400">{reg.email}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <input
+                        type="checkbox"
+                        // Check local status first, fallback to prop, default to false
+                        checked={localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleCheckInToggle(
+                          reg.uid,
+                          localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false,
+                          e as unknown as React.MouseEvent
+                        )}
+                        className="w-5 h-5 rounded border-gray-600 text-blue-600 focus:ring-blue-500 bg-gray-700 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-6 py-4 text-sm">{reg.school || '—'}</td>
                     <td className="px-6 py-4 text-sm">{reg.year || '—'}</td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        reg.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
                         reg.status === 'waitlisted' ? 'bg-yellow-500/20 text-yellow-400' :
-                        reg.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-                        reg.status === 'incomplete' ? 'bg-gray-500/20 text-gray-400' :
-                        'bg-blue-500/20 text-blue-400'
-                      }`}>
+                          reg.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
+                            reg.status === 'incomplete' ? 'bg-gray-500/20 text-gray-400' :
+                              'bg-blue-500/20 text-blue-400'
+                        }`}>
                         {reg.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        reg.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
                         'bg-gray-500/20 text-gray-400'
-                      }`}>
+                        }`}>
                         {reg.role}
                       </span>
                     </td>
@@ -377,11 +434,11 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
 
       {/* Detail Modal */}
       {selectedRegistration && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
           onClick={() => setSelectedRegistration(null)}
         >
-          <div 
+          <div
             className="bg-gray-900 border border-white/10 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
@@ -467,21 +524,19 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Status</p>
-                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${
-                    selectedRegistration.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
+                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${selectedRegistration.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
                     selectedRegistration.status === 'waitlisted' ? 'bg-yellow-500/20 text-yellow-400' :
-                    selectedRegistration.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-                    'bg-blue-500/20 text-blue-400'
-                  }`}>
+                      selectedRegistration.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
+                        'bg-blue-500/20 text-blue-400'
+                    }`}>
                     {selectedRegistration.status}
                   </span>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Role</p>
-                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${
-                    selectedRegistration.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
+                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${selectedRegistration.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
                     'bg-gray-500/20 text-gray-400'
-                  }`}>
+                    }`}>
                     {selectedRegistration.role}
                   </span>
                 </div>
