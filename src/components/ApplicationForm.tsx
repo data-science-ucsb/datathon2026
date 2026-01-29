@@ -138,7 +138,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete, onEx
   return (
     <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
       <Toaster position="top-center" />
-      
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">Complete Your Application</h2>
         <p className="text-gray-400">Fill out the details below to complete your registration for Data4Good 2026</p>
@@ -209,9 +209,9 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete, onEx
           <input
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
             className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
-            placeholder="(123) 456-7890"
+            placeholder="1234567890"
           />
         </div>
 
@@ -354,7 +354,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ uid, onComplete, onEx
               </>
             )}
           </button>
-          
+
           <button
             type="submit"
             disabled={loading}
