@@ -90,7 +90,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     const totalAccounts = registrations.length;
     const completedApplications = registrations.filter(r => r.applicationCompleted).length;
     const incompleteApplications = totalAccounts - completedApplications;
-    const accepted = registrations.filter(r => r.status === 'accepted').length;
+    const checkedIn = registrations.filter(r => r.isCheckedIn).length;
     const submitted = registrations.filter(r => r.status === 'submitted').length;
     const waitlisted = registrations.filter(r => r.status === 'waitlisted').length;
     const rejected = registrations.filter(r => r.status === 'rejected').length;
@@ -112,7 +112,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       totalAccounts,
       completedApplications,
       incompleteApplications,
-      accepted,
+      checkedIn,
+      accepted: registrations.filter(r => r.status === 'accepted').length, // Keep accepted in object just in case, but unused in UI
       submitted,
       waitlisted,
       rejected,
@@ -228,17 +229,18 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             <p className="text-3xl font-bold text-yellow-400">{stats.incompleteApplications}</p>
           </div>
 
-          {/* Accepted */}
+          {/* Checked In (Replaces Accepted) */}
           <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">Accepted</p>
+              <p className="text-sm text-gray-400">Checked In</p>
               <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {/* Reuse Checkmark or use a different icon like UserCheck */}
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <p className="text-3xl font-bold text-purple-400">{stats.accepted}</p>
+            <p className="text-3xl font-bold text-purple-400">{stats.checkedIn}</p>
           </div>
         </div>
 
