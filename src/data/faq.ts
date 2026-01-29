@@ -12,7 +12,7 @@ export const FAQ_DATA: FAQItem[] = [
   },
   {
     question: "What is the team size?",
-    answer: "Teams can consist of 1 to 4 members. You can form your own team or find one during our team finding socials."
+    answer: "Teams can consist of 2 to 5 members. You can form your own team or find one during our team finding socials."
   },
   {
     question: "Is there a registration fee?",
