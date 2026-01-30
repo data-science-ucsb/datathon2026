@@ -61,8 +61,8 @@ const SponsorContact: React.FC = () => {
                 className="w-full max-w-2xl bg-gray-950/60 backdrop-blur-xl border border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl relative z-10"
             >
                 <div className="text-center mb-10">
-                    <h1 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                        Partner With Us
+                    <h1 className="text-4xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
+                        Partner With Us 
                     </h1>
                     <p className="text-gray-400 text-lg">
                         Join us in empowering the next generation of data scientists.
