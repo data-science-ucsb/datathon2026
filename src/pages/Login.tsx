@@ -66,7 +66,7 @@ const Login: React.FC = () => {
       
       const actionCodeSettings = {
         url: 'https://datathon.datascienceucsb.org/reset-password',
-        handleCodeInApp: true,
+        handleCodeInApp: false,
       };
       
       await sendPasswordResetEmail(auth, resetEmail, actionCodeSettings);
@@ -119,7 +119,7 @@ const Login: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
             className="hidden md:flex flex-col justify-center items-center p-12 relative bg-cover bg-center"
-            style={{ backgroundImage: 'url(/src/assets/datathon9.jpg)' }}
+            style={{ backgroundImage: 'url(/datathon9.jpg)' }}
           >
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
             <div className="relative z-10 text-center space-y-6">

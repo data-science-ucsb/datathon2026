@@ -34,7 +34,7 @@ const Home: React.FC = () => {
       >
         <Main />
       </motion.div>
-      
+
       {/* Statistics Section */}
       <section className="relative py-20 bg-white/5 backdrop-blur-sm overflow-hidden">
         {/* Top Glowing Boundary */}
@@ -52,7 +52,7 @@ const Home: React.FC = () => {
           transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
           className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-purple-600/0 blur-sm origin-center"
         ></motion.div>
-        
+
         {/* Bottom Glowing Boundary */}
         <motion.div
           initial={{ scaleX: 0 }}
@@ -92,17 +92,17 @@ const Home: React.FC = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.4 }}
       >
-        <FAQ />
+        <Sponsors />
       </motion.div>
 
-      {/* <motion.div
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.4 }}
       >
-        <Sponsors />
-      </motion.div> */}
+        <FAQ />
+      </motion.div>
     </main>
   );
 };

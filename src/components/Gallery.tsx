@@ -1,7 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'; // Removed EffectFade
-import datathon1 from "../assets/datathon1.jpg";
+import datathon1 from "/datathon1.jpg";
 import datathon2 from "../assets/datathon2.jpeg";
 import datathon3 from "../assets/datathon3.jpeg";
 import datathon4 from "../assets/datathon4.jpeg";
@@ -41,7 +41,7 @@ const Gallery: React.FC = () => {
 
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-5">
-          <h2 className="text-4xl font-bold mb-4">Previous Years</h2>
+          <h2 className="text-4xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent mb-4">Previous Years</h2>
           <p className="text-gray-400">A look back at our previous Datathons!</p>
         </div>
 
