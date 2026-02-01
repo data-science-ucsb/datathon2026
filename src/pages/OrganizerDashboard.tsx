@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { doc, updateDoc, collection, query, getDocs } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import toast, { Toaster } from 'react-hot-toast';
+import { ClipLoader } from 'react-spinners';
 
 interface Registration {
   uid: string;
@@ -36,8 +37,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
-  // Local state for immediate UI feedback. Dictionary of uid -> boolean status.
   const [localCheckInStatus, setLocalCheckInStatus] = useState<Record<string, boolean>>({});
+  const [loadingCheckIn, setLoadingCheckIn] = useState<Record<string, boolean>>({});
 
   const handleLogout = async () => {
     try {
@@ -48,49 +49,49 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     }
   };
 
-  const handleCheckInToggle = async (uid: string, currentStatus: boolean, e: React.MouseEvent) => {
+  const handleCheckInToggle = async (uid: string, currentStatus: boolean, e: React.MouseEvent | React.ChangeEvent) => {
     e.stopPropagation();
 
-    // Determine the next status. If we have a local override, use that, otherwise use prop.
-    // Actually, simply toggle whatever was passed in as "currentStatus" (which should be the source of truth at click time).
     const newStatus = !currentStatus;
 
     try {
-      // 1. Optimistic Update (Local State)
+      setLoadingCheckIn(prev => ({ ...prev, [uid]: true }));
+
+      await updateDoc(doc(db, 'registrations', uid), {
+        isCheckedIn: newStatus
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       setLocalCheckInStatus(prev => ({
         ...prev,
         [uid]: newStatus
       }));
 
-      // 2. Fire and forget update
-      await updateDoc(doc(db, 'registrations', uid), {
-        isCheckedIn: newStatus
-      });
+      if (newStatus) {
+        toast.success('Checked in!', {
+          duration: 1500,
+        });
+      }
 
-      toast.success(newStatus ? 'Checked in successfully' : 'Check-in removed', {
-        id: `checkin-${uid}`, // Prevent duplicate toasts
-        duration: 2000
-      });
     } catch (error) {
       console.error('Error toggling check-in:', error);
-      toast.error('Failed to update status');
-
-      // Revert local state on error
-      setLocalCheckInStatus(prev => ({
-        ...prev,
-        [uid]: !newStatus
-      }));
+      toast.error('Failed to update check-in status');
+    } finally {
+      setLoadingCheckIn(prev => ({ ...prev, [uid]: false }));
     }
   };
 
-
-
-  // Calculate statistics
   const stats = useMemo(() => {
     const totalAccounts = registrations.length;
     const completedApplications = registrations.filter(r => r.applicationCompleted).length;
     const incompleteApplications = totalAccounts - completedApplications;
-    const checkedIn = registrations.filter(r => r.isCheckedIn).length;
+
+    const checkedIn = registrations.filter(r => {
+      const localStatus = localCheckInStatus[r.uid];
+      return localStatus !== undefined ? localStatus : r.isCheckedIn;
+    }).length;
+
     const submitted = registrations.filter(r => r.status === 'submitted').length;
     const waitlisted = registrations.filter(r => r.status === 'waitlisted').length;
     const rejected = registrations.filter(r => r.status === 'rejected').length;
@@ -99,7 +100,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     const hasTeam = registrations.filter(r => r.hasTeam === 'yes').length;
     const lookingForTeam = registrations.filter(r => r.hasTeam === 'no').length;
 
-    // Average experience
     const completedRegs = registrations.filter(r => r.applicationCompleted);
     const avgHackathonExp = completedRegs.length > 0
       ? (completedRegs.reduce((sum, r) => sum + (r.hackathonExperience || 0), 0) / completedRegs.length).toFixed(1)
@@ -113,7 +113,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       completedApplications,
       incompleteApplications,
       checkedIn,
-      accepted: registrations.filter(r => r.status === 'accepted').length, // Keep accepted in object just in case, but unused in UI
+      accepted: registrations.filter(r => r.status === 'accepted').length,
       submitted,
       waitlisted,
       rejected,
@@ -125,7 +125,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       avgCodingExp,
       completionRate: totalAccounts > 0 ? ((completedApplications / totalAccounts) * 100).toFixed(0) : '0'
     };
-  }, [registrations]);
+  }, [registrations, localCheckInStatus]);
 
   const exportToCSV = () => {
     const headers = ['Name', 'Email', 'School', 'Year', 'Major', 'Phone', 'Dietary Restrictions', 'Has Team', 'Hackathon Experience', 'Coding Experience', 'Heard From', 'Status', 'Role', 'Created At'];
@@ -167,17 +167,45 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     return matchesSearch && matchesStatus;
   });
 
+  const CheckInBox = ({ reg }: { reg: Registration }) => {
+    const isLoading = loadingCheckIn[reg.uid];
+    const isChecked = localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false;
+
+    return (
+      <div
+        onClick={(e) => {
+          if (!isLoading) {
+            handleCheckInToggle(reg.uid, isChecked, e);
+          }
+        }}
+        className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-all duration-200 ${
+          isLoading
+            ? 'border-blue-400 bg-blue-500/20'
+            : isChecked
+              ? 'border-green-500 bg-green-500'
+              : 'border-gray-500 bg-gray-800 hover:border-gray-400'
+        }`}
+      >
+        {isLoading ? (
+          <ClipLoader size={14} color="#60a5fa" />
+        ) : isChecked ? (
+          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen pt-24 px-6 pb-12">
+      <Toaster position="top-center" />
       <div className="max-w-7xl mx-auto">
-        {/* Header with Logout */}
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">Organizer Dashboard</h1>
             <p className="text-gray-400">Overview of all registrations and statistics</p>
           </div>
-
-          {/* Logout Button - Top Right */}
           <button
             onClick={handleLogout}
             className="px-4 py-2 rounded-lg bg-red-600/10 hover:bg-red-600/20 backdrop-blur-xl border border-red-500/20 hover:border-red-400/40 text-red-300/80 hover:text-red-200 text-sm font-medium transition-all duration-300"
@@ -185,11 +213,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             Logout
           </button>
         </div>
-        <Toaster position="top-right" />
 
-        {/* Statistics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {/* Total Accounts */}
           <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-400">Total Accounts</p>
@@ -202,7 +227,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             <p className="text-3xl font-bold text-blue-400">{stats.totalAccounts}</p>
           </div>
 
-          {/* Completed Applications */}
           <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-400">Completed Apps</p>
@@ -216,7 +240,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             <p className="text-xs text-gray-500 mt-1">{stats.completionRate}% completion rate</p>
           </div>
 
-          {/* Incomplete Applications */}
           <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-400">Incomplete Apps</p>
@@ -229,13 +252,11 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             <p className="text-3xl font-bold text-yellow-400">{stats.incompleteApplications}</p>
           </div>
 
-          {/* Checked In (Replaces Accepted) */}
           <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-400">Checked In</p>
               <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  {/* Reuse Checkmark or use a different icon like UserCheck */}
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -244,9 +265,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
-        {/* Secondary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Role Distribution */}
           <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-4">Role Distribution</h3>
             <div className="space-y-3">
@@ -266,7 +285,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             </div>
           </div>
 
-          {/* Team Status */}
           <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-4">Team Status</h3>
             <div className="space-y-3">
@@ -281,7 +299,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
             </div>
           </div>
 
-          {/* Experience Levels */}
           <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-4">Avg Experience</h3>
             <div className="space-y-3">
@@ -297,7 +314,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
-        {/* Application Status Breakdown */}
         <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-bold mb-4">Application Status Breakdown</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -320,7 +336,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
-        {/* Search and Filter */}
         <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
@@ -355,7 +370,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
-        {/* Registrations Table */}
         <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -380,18 +394,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
                     <td className="px-6 py-4 text-sm">{reg.name || '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-400">{reg.email}</td>
                     <td className="px-6 py-4 text-sm">
-                      <input
-                        type="checkbox"
-                        // Check local status first, fallback to prop, default to false
-                        checked={localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => handleCheckInToggle(
-                          reg.uid,
-                          localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false,
-                          e as unknown as React.MouseEvent
-                        )}
-                        className="w-5 h-5 rounded border-gray-600 text-blue-600 focus:ring-blue-500 bg-gray-700 cursor-pointer"
-                      />
+                      <CheckInBox reg={reg} />
                     </td>
                     <td className="px-6 py-4 text-sm">{reg.school || '—'}</td>
                     <td className="px-6 py-4 text-sm">{reg.year || '—'}</td>
@@ -434,7 +437,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
         </div>
       </div>
 
-      {/* Detail Modal */}
       {selectedRegistration && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
