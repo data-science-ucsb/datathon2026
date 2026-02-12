@@ -164,7 +164,11 @@ const SponsorContact: React.FC = () => {
             </motion.div>
 
             <div className="w-full max-w-7xl mx-auto z-10">
-                <Sponsors title="Join our legacy of sponsors" showBackground={false} />
+                <Sponsors 
+                  title="Join our legacy of sponsors" 
+                  showBackground={false} 
+                  showAllSponsors={true}  // Show ALL sponsors on this page
+                />
             </div>
         </div>
     );

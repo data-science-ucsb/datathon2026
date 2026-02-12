@@ -1,5 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import arborLogo from '../assets/arborenergy.webp';
+import balsamiqLogo from '../assets/balsamiq_logomark_white.png';
+import elevenLabsLogo from '../assets/elevenlabs.svg';
+import exponentLogo from '../assets/ExponentLogo.png';
+import liveDataTechLogo from '../assets/livedata.svg';
+import rapidFireAiLogo from '../assets/rapidfireai.jpeg';
+import asFinanceLogo from '../assets/asfinance.png';
+import norththropLogo from '../assets/nglogo.svg';
 
 /* ========================================
    ORIGINAL GSAP DRAGGABLE VERSION (COMMENTED OUT)
@@ -84,7 +92,47 @@ const Sponsors: React.FC = () => {
 
 ======================================== */
 
-const SPONSORS = [
+// Current sponsors for this year's event
+const CURRENT_SPONSORS = [
+  {
+    name: 'Live Data Technologies',
+    logo: liveDataTechLogo,
+    url: 'https://www.livedatatechnologies.com/'
+  },
+  {
+    name: 'RapidFire AI',
+    logo: rapidFireAiLogo,
+    url: 'https://www.rapidfire.ai/'
+  },
+  {
+    name: 'ElevenLabs',
+    logo: elevenLabsLogo,
+    url: 'https://elevenlabs.io/'
+  },
+  {
+    name: 'Northrop Grumman',
+    logo: norththropLogo,
+    url: 'https://www.northropgrumman.com/'
+  },
+  {
+    name: 'Balsamiq',
+    logo: balsamiqLogo,
+    url: 'https://balsamiq.com/'
+  },
+  {
+    name: 'Arbor',
+    logo: arborLogo,
+    url: 'https://www.arbor.co/'
+  },
+  {
+    name: 'Exponent',
+    logo: exponentLogo,
+    url: 'https://www.tryexponent.com/'
+  },
+];
+
+// Legacy sponsors from previous events
+const LEGACY_SPONSORS = [
   {
     name: 'Red Bull',
     logo: 'https://upload.wikimedia.org/wikipedia/en/f/f5/RedBullEnergyDrink.svg',
@@ -106,33 +154,35 @@ const SPONSORS = [
     url: 'https://groq.com/'
   },
   {
-    name: 'Balsamiq',
-    logo: 'https://img.utdstc.com/icon/ec0/4ea/ec04ea230c0ee7f85bd077fcd4c37f2f360b17aa6bebabe80dbbb127b58a4fed:200',
-    url: 'https://balsamiq.com/'
-  },
-  {
     name: 'Caje Coffee',
     logo: 'https://caje.coffee/cdn/shop/files/Logo-shopify-200x100_410x.png?v=1613784592',
     url: 'https://caje.coffee/'
   },
   {
     name: 'AS Finance Committee',
-    logo: 'https://asfb.as.ucsb.edu/files/2025/11/ASFC_Gull2_Bill.png',
+    logo: asFinanceLogo,
     url: 'https://asfb.as.ucsb.edu/'
   },
 ];
+
+// Combined list of all sponsors
+const ALL_SPONSORS = [...CURRENT_SPONSORS, ...LEGACY_SPONSORS];
 
 interface SponsorsProps {
   title?: string;
   className?: string;
   showBackground?: boolean;
+  showAllSponsors?: boolean; // New prop to show legacy sponsors
 }
 
 const Sponsors: React.FC<SponsorsProps> = ({
-  title = "Past Sponsors",
+  title = "Sponsors",
   className = "",
-  showBackground = true
+  showBackground = true,
+  showAllSponsors = false
 }) => {
+  const sponsors = showAllSponsors ? ALL_SPONSORS : CURRENT_SPONSORS;
+
   return (
     <section id="sponsors" className={`relative py-20 overflow-hidden ${showBackground ? 'bg-white/5 backdrop-blur-sm' : ''} ${className}`}>
       <div className="max-w-7xl mx-auto px-6">
@@ -148,18 +198,25 @@ const Sponsors: React.FC<SponsorsProps> = ({
             {title}
           </h2>
           <p className="text-gray-400 text-lg">
-            Thank you to our amazing sponsors who made our events possible
+            {showAllSponsors 
+              ? "Thank you to all our amazing sponsors past and present"
+              : "Thank you to our amazing sponsors who make our event possible"
+            }
           </p>
         </motion.div>
 
         {/* Sponsors Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {SPONSORS.map((sponsor, index) => (
-            <a
+          {sponsors.map((sponsor, index) => (
+            <motion.a
               key={index}
               href={sponsor.url}
               target="_blank"
               rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
               className="group relative transform transition-transform duration-300 hover:scale-105 hover:-translate-y-1"
             >
               {/* Card */}
@@ -174,7 +231,7 @@ const Sponsors: React.FC<SponsorsProps> = ({
                   className="relative z-10 max-h-16 w-auto object-contain"
                 />
               </div>
-            </a>
+            </motion.a>
           ))}
         </div>
       </div>
