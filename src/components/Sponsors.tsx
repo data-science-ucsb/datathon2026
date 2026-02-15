@@ -5,7 +5,7 @@ import balsamiqLogo from '../assets/balsamiq_logomark_white.png';
 import elevenLabsLogo from '../assets/elevenlabs.svg';
 import exponentLogo from '../assets/ExponentLogo.png';
 import liveDataTechLogo from '../assets/livedata.svg';
-import rapidFireAiLogo from '../assets/rapidfireai.jpeg';
+import rapidFireAiLogo from '../assets/rapidfire.png';
 import asFinanceLogo from '../assets/asfinance.png';
 import norththropLogo from '../assets/nglogo.svg';
 
