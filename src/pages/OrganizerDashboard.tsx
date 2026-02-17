@@ -5,6 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Registration {
   uid: string;
@@ -31,10 +32,14 @@ interface OrganizerDashboardProps {
   registrations: Registration[];
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
+  const [isTableExpanded, setIsTableExpanded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [localCheckInStatus, setLocalCheckInStatus] = useState<Record<string, boolean>>({});
@@ -127,6 +132,28 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     };
   }, [registrations, localCheckInStatus]);
 
+  const filteredRegistrations = useMemo(() => {
+    return registrations.filter(reg => {
+      const matchesSearch = (reg.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (reg.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (reg.school || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === 'all' || reg.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [registrations, searchTerm, filterStatus]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredRegistrations.length / ITEMS_PER_PAGE);
+  const paginatedRegistrations = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRegistrations.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredRegistrations, currentPage]);
+
+  // Reset to page 1 when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
+
   const exportToCSV = () => {
     const headers = ['Name', 'Email', 'School', 'Year', 'Major', 'Phone', 'Dietary Restrictions', 'Has Team', 'Hackathon Experience', 'Coding Experience', 'Heard From', 'Status', 'Role', 'Created At'];
     const rows = filteredRegistrations.map(reg => [
@@ -159,14 +186,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     a.click();
   };
 
-  const filteredRegistrations = registrations.filter(reg => {
-    const matchesSearch = (reg.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (reg.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (reg.school || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || reg.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
-
   const CheckInBox = ({ reg }: { reg: Registration }) => {
     const isLoading = loadingCheckIn[reg.uid];
     const isChecked = localCheckInStatus[reg.uid] ?? reg.isCheckedIn ?? false;
@@ -197,6 +216,103 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     );
   };
 
+  const PaginationControls = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
+        <div className="text-sm text-gray-400">
+          Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredRegistrations.length)} of {filteredRegistrations.length} entries
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {/* Previous Button */}
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              currentPage === 1
+                ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* First Page */}
+          {startPage > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentPage(1)}
+                className="px-3 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white transition-all"
+              >
+                1
+              </button>
+              {startPage > 2 && <span className="text-gray-500">...</span>}
+            </>
+          )}
+
+          {/* Page Numbers */}
+          {pageNumbers.map(page => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                currentPage === page
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          {/* Last Page */}
+          {endPage < totalPages && (
+            <>
+              {endPage < totalPages - 1 && <span className="text-gray-500">...</span>}
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                className="px-3 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white transition-all"
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+
+          {/* Next Button */}
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              currentPage === totalPages
+                ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen pt-24 px-6 pb-12">
       <Toaster position="top-center" />
@@ -214,6 +330,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </button>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
@@ -265,6 +382,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
+        {/* Secondary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-4">Role Distribution</h3>
@@ -314,6 +432,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
+        {/* Application Status Breakdown */}
         <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-bold mb-4">Application Status Breakdown</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -336,107 +455,164 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           </div>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <input
-                type="text"
-                placeholder="Search by name, email, or school..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
-              />
+        {/* Collapsible Registrations Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
+        >
+          {/* Collapsible Header */}
+          <button
+            onClick={() => setIsTableExpanded(!isTableExpanded)}
+            className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-bold">All Registrations</h3>
+                <p className="text-sm text-gray-400">{filteredRegistrations.length} registrations found</p>
+              </div>
             </div>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
+            
+            {/* Chevron Icon */}
+            <motion.div
+              animate={{ rotate: isTableExpanded ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
             >
-              <option value="all">All Status</option>
-              <option value="incomplete">Incomplete</option>
-              <option value="submitted">Submitted</option>
-              <option value="accepted">Accepted</option>
-              <option value="waitlisted">Waitlisted</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={exportToCSV}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-            >
-              Export to CSV ({filteredRegistrations.length})
-            </button>
-          </div>
-        </div>
+              <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </motion.div>
+          </button>
 
-        <div className="bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-950/50 border-b border-white/10">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Name</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Check In</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">School</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Year</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Role</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {filteredRegistrations.map((reg) => (
-                  <tr
-                    key={reg.uid}
-                    className="hover:bg-white/5 transition"
-                  >
-                    <td className="px-6 py-4 text-sm">{reg.name || '—'}</td>
-                    <td className="px-6 py-4 text-sm text-gray-400">{reg.email}</td>
-                    <td className="px-6 py-4 text-sm">
-                      <CheckInBox reg={reg} />
-                    </td>
-                    <td className="px-6 py-4 text-sm">{reg.school || '—'}</td>
-                    <td className="px-6 py-4 text-sm">{reg.year || '—'}</td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
-                        reg.status === 'waitlisted' ? 'bg-yellow-500/20 text-yellow-400' :
-                          reg.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-                            reg.status === 'incomplete' ? 'bg-gray-500/20 text-gray-400' :
-                              'bg-blue-500/20 text-blue-400'
-                        }`}>
-                        {reg.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
-                        'bg-gray-500/20 text-gray-400'
-                        }`}>
-                        {reg.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <button
-                        onClick={() => setSelectedRegistration(reg)}
-                        className="text-blue-400 hover:text-blue-300 transition"
+          {/* Expandable Content */}
+          <AnimatePresence>
+            {isTableExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="border-t border-white/10">
+                  {/* Search and Filter Controls */}
+                  <div className="p-6 border-b border-white/10">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        <input
+                          type="text"
+                          placeholder="Search by name, email, or school..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
+                        />
+                      </div>
+                      <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 transition"
                       >
-                        View Details →
+                        <option value="all">All Status</option>
+                        <option value="incomplete">Incomplete</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="waitlisted">Waitlisted</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={exportToCSV}
+                        className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+                      >
+                        Export to CSV ({filteredRegistrations.length})
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
 
-          {filteredRegistrations.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
-              No registrations found
-            </div>
-          )}
-        </div>
+                  {/* Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-950/50 border-b border-white/10">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Name</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Check In</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">School</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Year</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Role</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {paginatedRegistrations.map((reg) => (
+                          <tr
+                            key={reg.uid}
+                            className="hover:bg-white/5 transition"
+                          >
+                            <td className="px-6 py-4 text-sm">{reg.name || '—'}</td>
+                            <td className="px-6 py-4 text-sm text-gray-400">{reg.email}</td>
+                            <td className="px-6 py-4 text-sm">
+                              <CheckInBox reg={reg} />
+                            </td>
+                            <td className="px-6 py-4 text-sm">{reg.school || '—'}</td>
+                            <td className="px-6 py-4 text-sm">{reg.year || '—'}</td>
+                            <td className="px-6 py-4 text-sm">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
+                                reg.status === 'waitlisted' ? 'bg-yellow-500/20 text-yellow-400' :
+                                  reg.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
+                                    reg.status === 'incomplete' ? 'bg-gray-500/20 text-gray-400' :
+                                      'bg-blue-500/20 text-blue-400'
+                                }`}>
+                                {reg.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${reg.role === 'organizer' ? 'bg-purple-500/20 text-purple-400' :
+                                'bg-gray-500/20 text-gray-400'
+                                }`}>
+                                {reg.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <button
+                                onClick={() => setSelectedRegistration(reg)}
+                                className="text-blue-400 hover:text-blue-300 transition"
+                              >
+                                View Details →
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {filteredRegistrations.length === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                      No registrations found
+                    </div>
+                  )}
+
+                  {/* Pagination Controls */}
+                  {filteredRegistrations.length > 0 && (
+                    <PaginationControls />
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
+      {/* Registration Details Modal */}
       {selectedRegistration && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
