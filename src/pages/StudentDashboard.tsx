@@ -38,8 +38,8 @@ interface TeamMember {
 
 interface Team {
   id: string;
-  name: string;
   teamNumber: number;
+  teamCode: string;
   members: TeamMember[];
   createdAt: string;
 }
