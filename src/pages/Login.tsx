@@ -26,7 +26,6 @@ const Login: React.FC = () => {
       setError('');
       setLoading(true);
       await login(email, password);
-      toast.success('Welcome back!');
       setTimeout(() => navigate('/dashboard'), 500);
     } catch (err: any) {
       let errorMessage = 'Failed to log in. Please try again.';
