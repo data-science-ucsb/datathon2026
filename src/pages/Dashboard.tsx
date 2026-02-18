@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import StudentDashboard from './StudentDashboard';
 import OrganizerDashboard from './OrganizerDashboard';
@@ -25,6 +25,7 @@ interface Registration {
   createdAt: string;
   emailVerified: boolean;
   applicationCompleted: boolean;
+  isCheckedIn?: boolean;
 }
 
 const Dashboard: React.FC = () => {
@@ -41,43 +42,55 @@ const Dashboard: React.FC = () => {
       return;
     }
 
-    fetchData();
-  }, [currentUser]);
+    // Real-time listener for current user's registration
+    const unsubscribeUser = onSnapshot(
+      doc(db, 'registrations', currentUser.uid),
+      (userDoc) => {
+        if (!userDoc.exists()) {
+          console.error('No user document found!');
+          setLoading(false);
+          return;
+        }
 
-  const fetchData = async () => {
-    if (!currentUser) return;
-
-    try {
-      const userDoc = await getDoc(doc(db, 'registrations', currentUser.uid));
-      
-      if (!userDoc.exists()) {
-        console.error('No user document found!');
+        const userData = userDoc.data() as Registration;
+        const role = userData?.role || 'student';
+        setUserRole(role);
+        setUserRegistration(userData);
         setLoading(false);
-        return;
+      },
+      (error) => {
+        console.error('Error fetching user registration:', error);
+        setLoading(false);
       }
+    );
 
-      const userData = userDoc.data() as Registration;
-      const role = userData?.role || 'student';
-      setUserRole(role);
-      setUserRegistration(userData);
+    return () => unsubscribeUser();
+  }, [currentUser, navigate]);
 
-      if (role === 'organizer') {
-        const q = query(collection(db, 'registrations'));
-        const querySnapshot = await getDocs(q);
+  // Separate effect for organizer registrations list
+  useEffect(() => {
+    if (userRole !== 'organizer') {
+      setRegistrations(userRegistration ? [userRegistration] : []);
+      return;
+    }
+
+    // Real-time listener for all registrations (organizer only)
+    const unsubscribeRegistrations = onSnapshot(
+      collection(db, 'registrations'),
+      (snapshot) => {
         const regs: Registration[] = [];
-        querySnapshot.forEach((doc) => {
+        snapshot.forEach((doc) => {
           regs.push(doc.data() as Registration);
         });
         setRegistrations(regs);
-      } else {
-        setRegistrations([userData]);
+      },
+      (error) => {
+        console.error('Error fetching registrations:', error);
       }
-    } catch (error) {
-      console.error('Error fetching registrations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
+
+    return () => unsubscribeRegistrations();
+  }, [userRole, userRegistration]);
 
   if (loading) {
     return (
@@ -104,7 +117,7 @@ const Dashboard: React.FC = () => {
     <StudentDashboard 
       userRegistration={userRegistration!} 
       currentUserId={currentUser!.uid}
-      onRefresh={fetchData}
+      onRefresh={() => {}} // No longer needed since we have real-time updates
     />
   );
 };
