@@ -14,8 +14,6 @@ interface OrganizerTeamsSandboxProps {
   onDeleteTeam: (teamId: string) => void;
   onRemoveMember: (teamId: string, memberUid: string) => void;
   onAddMember: (teamId: string, registration: Registration) => void;
-  newTeamName: string;
-  onNewTeamNameChange: (value: string) => void;
   onCreateTeam: () => void;
   isCreatingTeam: boolean;
   memberSearchTerm: string;
@@ -37,8 +35,6 @@ const OrganizerTeamsSandbox: React.FC<OrganizerTeamsSandboxProps> = ({
   onDeleteTeam,
   onRemoveMember,
   onAddMember,
-  newTeamName,
-  onNewTeamNameChange,
   onCreateTeam,
   isCreatingTeam,
   memberSearchTerm,
@@ -93,51 +89,40 @@ const OrganizerTeamsSandbox: React.FC<OrganizerTeamsSandboxProps> = ({
             className="overflow-hidden"
           >
             <div className="border-t border-white/10 p-6">
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-gray-400">Create New Team</h4>
-                  {teams.length > 0 && (
-                    <button
-                      onClick={onExportCSV}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition flex items-center gap-2"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={onCreateTeam}
+                  disabled={isCreatingTeam}
+                  className={`px-6 py-3 rounded-lg font-medium transition flex items-center gap-2 ${
+                    isCreatingTeam
+                      ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  }`}
+                >
+                  {isCreatingTeam ? (
+                    <ClipLoader size={16} color="#fff" />
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
-                      Export Teams CSV
-                    </button>
+                      Create New Team
+                    </>
                   )}
-                </div>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="Enter team name..."
-                    value={newTeamName}
-                    onChange={(e) => onNewTeamNameChange(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && onCreateTeam()}
-                    className="flex-1 px-4 py-3 bg-gray-950/50 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition"
-                  />
+                </button>
+
+                {teams.length > 0 && (
                   <button
-                    onClick={onCreateTeam}
-                    disabled={isCreatingTeam || !newTeamName.trim()}
-                    className={`px-6 py-3 rounded-lg font-medium transition flex items-center gap-2 ${
-                      isCreatingTeam || !newTeamName.trim()
-                        ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                        : 'bg-purple-600 hover:bg-purple-700 text-white'
-                    }`}
+                    onClick={onExportCSV}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition flex items-center gap-2"
                   >
-                    {isCreatingTeam ? (
-                      <ClipLoader size={16} color="#fff" />
-                    ) : (
-                      <>
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        Create Team
-                      </>
-                    )}
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Teams CSV
                   </button>
-                </div>
+                )}
               </div>
 
               {loadingTeams ? (
@@ -165,8 +150,13 @@ const OrganizerTeamsSandbox: React.FC<OrganizerTeamsSandboxProps> = ({
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div>
-                              <h4 className="font-bold text-lg">{team.name}</h4>
-                              <p className="text-xs text-gray-500">
+                              <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 font-bold text-sm">
+                                  {team.teamNumber}
+                                </span>
+                                <h4 className="font-bold text-lg">{team.teamCode}</h4>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">
                                 {team.members.length} member{team.members.length !== 1 ? 's' : ''}
                               </p>
                             </div>
@@ -273,6 +263,7 @@ const OrganizerTeamsSandbox: React.FC<OrganizerTeamsSandboxProps> = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                   <p>No teams created yet</p>
+                  <p className="text-sm mt-1">Click "Create New Team" to get started</p>
                 </div>
               )}
             </div>

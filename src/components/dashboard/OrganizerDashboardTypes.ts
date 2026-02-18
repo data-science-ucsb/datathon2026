@@ -14,8 +14,8 @@ export interface Registration {
   status: string;
   role: string;
   createdAt: string;
-  emailVerified: boolean;
-  applicationCompleted: boolean;
+  emailVerified?: boolean;
+  applicationCompleted?: boolean;
   isCheckedIn?: boolean;
 }
 
@@ -27,7 +27,8 @@ export interface TeamMember {
 
 export interface Team {
   id: string;
-  name: string;
+  teamNumber: number;
+  teamCode: string;
   members: TeamMember[];
   createdAt: string;
 }

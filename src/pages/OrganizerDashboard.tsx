@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import { nanoid } from 'nanoid';
 import { db } from '../firebase/config';
 import { useAuth } from '../contexts/AuthContext';
 import OrganizerDashboardHeader from '../components/dashboard/OrganizerDashboardHeader';
@@ -30,7 +31,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
 
   const [teams, setTeams] = useState<Team[]>([]);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
-  const [newTeamName, setNewTeamName] = useState('');
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [memberSearchTerm, setMemberSearchTerm] = useState('');
   const [showMemberSearch, setShowMemberSearch] = useState(false);
@@ -49,7 +49,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
         } as Team);
       });
 
-      teamsData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      teamsData.sort((a, b) => (a.teamNumber || 0) - (b.teamNumber || 0));
       setTeams(teamsData);
       setLoadingTeams(false);
     });
@@ -104,21 +104,24 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     }
   };
 
-  const handleCreateTeam = async () => {
-    if (!newTeamName.trim()) {
-      toast.error('Please enter a team name');
-      return;
-    }
+  const getNextTeamNumber = (): number => {
+    if (teams.length === 0) return 1;
+    const maxNumber = Math.max(...teams.map((t) => t.teamNumber || 0));
+    return maxNumber + 1;
+  };
 
+  const handleCreateTeam = async () => {
     try {
       setIsCreatingTeam(true);
+      const teamNumber = getNextTeamNumber();
+      const teamCode = nanoid(6).toUpperCase();
       await addDoc(collection(db, 'teams'), {
-        name: newTeamName.trim(),
+        teamNumber: teamNumber,
+        teamCode: teamCode,
         members: [],
         createdAt: new Date().toISOString()
       });
-      setNewTeamName('');
-      toast.success('Team created!');
+      toast.success(`Team created! Code: ${teamCode}`);
     } catch (error) {
       console.error('Error creating team:', error);
       toast.error('Failed to create team');
@@ -153,7 +156,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       candidate.members.some((teamMember) => teamMember.uid === member.uid)
     );
     if (existingTeam) {
-      toast.error(`${member.name || member.email} is already in team "${existingTeam.name}"`);
+      toast.error(`${member.name || member.email} is already in team ${existingTeam.teamCode}`);
       return;
     }
 
@@ -170,7 +173,7 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
 
       setMemberSearchTerm('');
       setShowMemberSearch(false);
-      toast.success(`Added ${member.name || member.email} to team!`);
+      toast.success(`Added ${member.name || member.email} to ${team.teamCode}!`);
     } catch (error) {
       console.error('Error adding member:', error);
       toast.error('Failed to add member');
@@ -339,7 +342,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
 
   const exportTeamsToCSV = () => {
     const headers = [
-      'Team Name',
+      'Team Number',
+      'Team Code',
       'Member Count',
       'Member Names',
       'Member Emails',
@@ -347,7 +351,8 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
     ];
 
     const rows = teams.map((team) => [
-      team.name,
+      team.teamNumber || '',
+      team.teamCode,
       team.members.length,
       team.members.map((m) => m.name).join('; '),
       team.members.map((m) => m.email).join('; '),
@@ -433,8 +438,6 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
           onDeleteTeam={handleDeleteTeam}
           onRemoveMember={handleRemoveMember}
           onAddMember={handleAddMember}
-          newTeamName={newTeamName}
-          onNewTeamNameChange={setNewTeamName}
           onCreateTeam={handleCreateTeam}
           isCreatingTeam={isCreatingTeam}
           memberSearchTerm={memberSearchTerm}
