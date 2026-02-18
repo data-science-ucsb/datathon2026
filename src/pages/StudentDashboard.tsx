@@ -148,10 +148,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ userRegistration, c
                     <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-2xl p-6">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center">
-                          <span className="text-2xl font-bold text-purple-400">{userTeam.teamCode}</span>
+                          <span className="text-2xl font-bold text-purple-400">{userTeam.teamNumber}</span>
                         </div>
                         <div>
-                          <h2 className="text-xl font-bold text-white">{userTeam.name}</h2>
+                          <h2 className="text-xl font-bold text-white">{userTeam.teamCode}</h2>
                           <p className="text-sm text-gray-400">
                             {userTeam.members.length} team member{userTeam.members.length !== 1 ? 's' : ''}
                           </p>
