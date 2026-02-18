@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface CollapsibleSectionProps {
   title: string;
   subtitle: string;
-  icon: string;
-  iconBgColor: string;
+  icon?: string;
+  iconBgColor?: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }
@@ -33,9 +33,11 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 ${iconBgColor} rounded-full flex items-center justify-center`}>
-            <span className="text-xl">{icon}</span>
-          </div>
+          {icon && iconBgColor && (
+            <div className={`w-10 h-10 ${iconBgColor} rounded-full flex items-center justify-center`}>
+              <span className="text-xl">{icon}</span>
+            </div>
+          )}
           <div className="text-left">
             <h3 className="text-xl font-bold">{title}</h3>
             <p className="text-sm text-gray-400">{subtitle}</p>
