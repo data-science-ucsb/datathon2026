@@ -211,20 +211,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ userRegistration, c
             ) : (
               /* Not Checked In: Show registration info only */
               <>
-                {/* Check-in reminder banner */}
-                <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="font-medium text-yellow-400">You haven't checked in yet</p>
-                      <p className="text-sm text-gray-400">Check in at the event to access all resources, schedule, and more!</p>
-                    </div>
-                  </div>
-                </div>
 
                 {/* My Registration Info */}
                 <div className="mb-6">
