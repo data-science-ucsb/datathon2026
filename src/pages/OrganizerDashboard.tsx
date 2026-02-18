@@ -347,17 +347,27 @@ const OrganizerDashboard: React.FC<OrganizerDashboardProps> = ({ registrations }
       'Member Count',
       'Member Names',
       'Member Emails',
+      'Member Phones',
       'Created At'
     ];
 
-    const rows = teams.map((team) => [
-      team.teamNumber || '',
-      team.teamCode,
-      team.members.length,
-      team.members.map((m) => m.name).join('; '),
-      team.members.map((m) => m.email).join('; '),
-      new Date(team.createdAt).toLocaleDateString()
-    ]);
+    const rows = teams.map((team) => {
+      // Get phone numbers from registrations for each team member
+      const memberPhones = team.members.map((m) => {
+        const registration = registrations.find((r) => r.uid === m.uid);
+        return registration?.phone || 'N/A';
+      });
+
+      return [
+        team.teamNumber || '',
+        team.teamCode,
+        team.members.length,
+        team.members.map((m) => m.name).join('; '),
+        team.members.map((m) => m.email).join('; '),
+        memberPhones.join('; '),
+        new Date(team.createdAt).toLocaleDateString()
+      ];
+    });
 
     const csvContent = [
       headers.join(','),
