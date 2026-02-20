@@ -10,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import ResetPassword from './pages/ResetPassword';
 import SponsorContact from './pages/SponsorContact';
 import PrivateRoute from './components/PrivateRoute';
+import { Toaster } from 'react-hot-toast';
+import ScrollToTop from './components/ScrollToTop';
+import { Analytics } from '@vercel/analytics/react';
 
 // Page transition variants - smoother and faster
 const pageVariants = {
@@ -78,12 +81,6 @@ const AnimatedRoutes = () => {
   );
 };
 
-import { Toaster } from 'react-hot-toast';
-
-// ... (existing helper function code omitted for brevity) ...
-
-import ScrollToTop from './components/ScrollToTop';
-
 const App: React.FC = () => {
   return (
     <Router>
@@ -102,6 +99,7 @@ const App: React.FC = () => {
               },
             }}
           />
+          <Analytics />
         </div>
       </AuthProvider>
     </Router>
