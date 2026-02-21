@@ -12,9 +12,9 @@ const SPONSOR_RESOURCES = [
   },
   {
     name: 'Live Data Technologies',
-    description: 'Massive datasets for training. Feel free to access the documentation + datasets below. <br/><br/><a href="https://docs.gotlivedata.com/docs/notion-dd-preview" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">📄 Documentation</a> &nbsp;|&nbsp; <a href="https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">🗄️ Datasets (Google Drive)</a>',
+    description: 'Massive datasets for training. Feel free to access the documentation + datasets below. <br/><br/><a href="https://docs.gotlivedata.com/docs/notion-dd-preview" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">📄 Documentation</a> &nbsp;|&nbsp; <a href="https://drive.google.com/drive/folders/1ZboILsWRdHPslbau7njPM2uNLVQApk7Y?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">🗄️ Datasets (Google Drive UPDATED)</a>',
     type: 'Tool',
-    url: 'https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing',
+    url: 'https://drive.google.com/drive/folders/1ZboILsWRdHPslbau7njPM2uNLVQApk7Y?usp=sharing',
   },
   {
     name: 'RapidFire AI',
