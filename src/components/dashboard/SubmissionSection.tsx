@@ -29,7 +29,7 @@ const SUBMISSION_STEPS: SubmissionStep[] = [
   {
     step: 4,
     title: 'Record Presentation',
-    description: 'Create a 5–7 min video explaining the problem, methodology, findings, and impact.',
+    description: 'Create a video up to 5 MIN explaining the problem, methodology, findings, and impact.',
   },
   {
     step: 5,
