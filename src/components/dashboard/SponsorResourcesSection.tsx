@@ -8,15 +8,27 @@ const SPONSOR_RESOURCES = [
     description: 'AI voice generation and text-to-speech API. Perfect for accessibility projects.',
     type: 'API',
     url: 'https://elevenlabs.io/docs',
-    logo: '🔊',
   },
   {
     name: 'RapidFire AI',
     description: 'AI-powered data analysis and visualization tools.',
     type: 'API',
     url: 'https://www.rapidfire.ai/',
-    logo: '⚡',
+    logo: '',
   },
+  {
+    name: 'Balsamiq',
+    description: 'Wireframing and UI mockup tool. Use code <strong>DATA4GOOD2026</strong> to redeem your free credits.',
+    type: 'Tool',
+    url: 'https://balsamiq.com/',
+  },
+  {
+    name: 'Live Data Technologies ',
+    description: 'Massive datasets for training.',
+    type: 'Tool',
+    url: 'https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing',
+  },
+
 ];
 
 const SponsorResourcesSection: React.FC = () => {
@@ -50,7 +62,10 @@ const SponsorResourcesSection: React.FC = () => {
                     {resource.type}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 line-clamp-2">{resource.description}</p>
+                <p 
+                  className="text-xs text-gray-400 line-clamp-2"
+                  dangerouslySetInnerHTML={{ __html: resource.description }}
+                />
               </div>
               <svg className="w-4 h-4 text-gray-500 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
