@@ -5,30 +5,30 @@ import CollapsibleSection from './CollapsibleSection';
 const SPONSOR_RESOURCES = [
   {
     name: 'ElevenLabs API',
-    description: 'AI voice generation and text-to-speech API. Perfect for accessibility projects.',
+    description: 'AI voice generation and text-to-speech API. Perfect for accessibility projects.<br/><br/><strong>How to claim your free credits:</strong><br/>1. Join the Discord: <a href="https://discord.com/invite/VnBvbbcdEC" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">discord.com/invite/VnBvbbcdEC</a><br/>2. Go to the #🎟️│coupon-codes channel<br/>3. Click "Start Redemption"<br/>4. Select the event & fill out the form with your registration email<br/>5. The bot will send your unique coupon code<br/><br/><a href="https://youtu.be/S143_JtCtV8" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">📺 Video Tutorial</a> &nbsp;|&nbsp; <a href="https://docs.google.com/document/d/1mCh5MtOzBw0aJpurQVUmIVFfPMAHW3MjNemE-LNiMto/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">📄 Hacker Guide</a>',
     type: 'API',
     url: 'https://elevenlabs.io/docs',
+    logo: '🔊',
+  },
+  {
+    name: 'Live Data Technologies',
+    description: 'Massive datasets for training. Feel free to access the documentation + datasets below. <br/><br/><a href="https://docs.gotlivedata.com/docs/notion-dd-preview" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">📄 Documentation</a> &nbsp;|&nbsp; <a href="https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">🗄️ Datasets (Google Drive)</a>',
+    type: 'Tool',
+    url: 'https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing',
   },
   {
     name: 'RapidFire AI',
-    description: 'AI-powered data analysis and visualization tools.',
+    description: 'AI-powered data analysis and visualization tools. Access the docs <a href="https://www.rapidfire.ai/" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">here</a>.',
     type: 'API',
     url: 'https://www.rapidfire.ai/',
     logo: '',
   },
   {
     name: 'Balsamiq',
-    description: 'Wireframing and UI mockup tool. Use code <strong>DATA4GOOD2026</strong> to redeem your free credits.',
+    description: 'Wireframing and UI mockup tool. Use code <strong>DATA4GOOD2026</strong> to redeem your free credits <a href="https://balsamiq.com/" target="_blank" rel="noopener noreferrer" style="color:#a78bfa;text-decoration:underline;">here</a>.',
     type: 'Tool',
     url: 'https://balsamiq.com/',
   },
-  {
-    name: 'Live Data Technologies ',
-    description: 'Massive datasets for training.',
-    type: 'Tool',
-    url: 'https://drive.google.com/drive/folders/1JmlTU29fWV-NDpMfJyCHcw-1uMEzRjqF?usp=sharing',
-  },
-
 ];
 
 const SponsorResourcesSection: React.FC = () => {
@@ -39,11 +39,8 @@ const SponsorResourcesSection: React.FC = () => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {SPONSOR_RESOURCES.map((resource, index) => (
-          <motion.a
+          <motion.div
             key={index}
-            href={resource.url}
-            target="_blank"
-            rel="noopener noreferrer"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -63,15 +60,12 @@ const SponsorResourcesSection: React.FC = () => {
                   </span>
                 </div>
                 <p 
-                  className="text-xs text-gray-400 line-clamp-2"
+                  className="text-xs text-gray-400"
                   dangerouslySetInnerHTML={{ __html: resource.description }}
                 />
               </div>
-              <svg className="w-4 h-4 text-gray-500 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
             </div>
-          </motion.a>
+          </motion.div>
         ))}
       </div>
 

@@ -14,7 +14,7 @@ const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenSchedule }) => {
       className="grid grid-cols-1 md:grid-cols-3 gap-4"
     >
       <a
-        href="https://discord.gg/your-discord"
+        href="https://discord.gg/j8Zr8xsb"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-4 p-5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 hover:bg-indigo-500/20 transition-colors"
