@@ -60,10 +60,7 @@ const SponsorResourcesSection: React.FC = () => {
         ))}
       </div>
 
-      {/* Placeholder for more sponsor resources */}
-      <div className="mt-4 p-4 rounded-xl bg-gray-800/30 border border-dashed border-white/10 text-center">
-        <p className="text-sm text-gray-500">More sponsor resources coming soon! 🚀</p>
-      </div>
+      
     </CollapsibleSection>
   );
 };
